@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
+import postRouter from './routes/post.js';
 
 // app config
 const app = express();
@@ -27,6 +28,7 @@ app.get('/', (req,res) => {
 })
 
 app.use("/user", userRouter);
+app.use("/post", postRouter)
 
 
 // listeners

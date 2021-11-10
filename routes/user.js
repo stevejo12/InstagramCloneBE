@@ -13,7 +13,8 @@ router.post('/register', verifySignUp.checkDuplicateUsernameOrEmail, (req, res) 
     username: req.body.username,
     fullname: req.body.fullname,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10)
+    password: bcrypt.hashSync(req.body.password, 10),
+    avatar: "https://i.stack.imgur.com/34AD2.jpg" // default for now
   })
 
   userSchema.create(reqData, (err, data) => {
