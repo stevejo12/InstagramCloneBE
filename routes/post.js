@@ -1,25 +1,51 @@
 import express from 'express';
+import cloudinaryConfig from '../utils/cloudinary.js';
 import { findUserIdentificationInPosts } from '../helper/user.js';
 import postSchema  from '../schema/post.js';
 
 const router = express.Router();
 
-router.post("/new", (req,res) => {
-  const reqData = new postSchema({
-    user_id: req.body.userID,
-    caption: req.body.caption,
-    uri: req.body.uri
-  })
+router.post("/new", async (req,res) => {
+  try {
+    const image = req.body.photo;
+  
+    const uploadedResponse = await cloudinaryConfig.uploader.upload(image, {
+      upload_preset: 'instagram_clone',
+      type: 'upload',
+      eager: [{
+        width: 614,
+        height: 614,
+        crop: "fit"
+      }]
+    })
 
-  postSchema.create(reqData, (err, data) => {
-    if (err) {
-      res.status(500).send(err)
+    // get image url
+    let imageURL;
+    if (Array.isArray(uploadedResponse.eager)) {
+      imageURL = uploadedResponse.eager[0].secure_url || uploadedResponse.secure_url
     } else {
-      res.status(201).json({
-        message: "Post successfully uploaded"
-      })
+      imageURL = uploadedResponse.secure_url
     }
-  })
+
+    const data = {
+      user_id: req.body.user_id,
+      caption: req.body.caption,
+      uri: imageURL
+    }
+
+    postSchema.create(data, (err, data) => {
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        res.status(201).json({
+          message: "Post successfully uploaded"
+        })
+      }
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ err: "Something went wrong" })
+  }
 })
 
 // temporary get all posts
@@ -29,7 +55,7 @@ router.post("/new", (req,res) => {
 router.get("/allPosts", (req, res) => {
   let refactoredPostsData = [];
   let data;
-  postSchema.find().exec((err, posts) => {
+  postSchema.find().sort({createdAt: 'desc'}).exec((err, posts) => {
     if (Array.isArray(posts)) {
       const requests = posts.map(post => {
         findUserIdentificationInPosts(post.user_id)
@@ -40,7 +66,6 @@ router.get("/allPosts", (req, res) => {
             console.log('error post: ', err);
           })
           .finally(() => {
-            console.log('finish promise', data);
             return refactoredPostsData.push(data);
           })
       })
@@ -60,8 +85,6 @@ router.get("/allPosts", (req, res) => {
           })
         })
       }, 500);
-
-      
     }
   })
 })

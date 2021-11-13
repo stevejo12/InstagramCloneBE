@@ -11,7 +11,7 @@ const port = process.env.API_PORT || 8002;
 dotenv.config();
 
 // middleware
-app.use(express.json())
+app.use(express.json({limit: '50mb'}))
 app.use(cors())
 
 // db config
@@ -21,6 +21,8 @@ mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
+  .then(() => console.log('connection to mongodb successful'))
+  .catch(error => console.error("Can't connect to mongoDB database"))
 
 // routes
 app.get('/', (req,res) => {
