@@ -1,6 +1,6 @@
 import express from 'express';
 import cloudinaryConfig from '../utils/cloudinary.js';
-import { findUserIdentificationInPosts } from '../helper/user.js';
+import { findUserIdentification } from '../helper/user.js';
 import postSchema  from '../schema/post.js';
 
 const router = express.Router();
@@ -58,7 +58,7 @@ router.get("/allPosts", (req, res) => {
   postSchema.find().sort({createdAt: 'desc'}).exec((err, posts) => {
     if (Array.isArray(posts)) {
       const requests = posts.map(post => {
-        findUserIdentificationInPosts(post.user_id)
+        findUserIdentification(post.user_id)
           .then((result) => {
             data = Object.assign({}, post.toJSON(), { user_id: result });
           })

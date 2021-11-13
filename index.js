@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
 import postRouter from './routes/post.js';
+import commentRouter from './routes/comment.js';
 
 // app config
 const app = express();
@@ -30,7 +31,8 @@ app.get('/', (req,res) => {
 })
 
 app.use("/user", userRouter);
-app.use("/post", postRouter)
+app.use("/post", postRouter);
+app.use("/comment", commentRouter)
 
 
 // listeners

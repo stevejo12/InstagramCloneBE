@@ -1,6 +1,6 @@
 import userschema from '../schema/user.js'
 
-export const findUserIdentificationInPosts = (_id) => {
+export const findUserIdentification = (_id) => {
   return new Promise((resolve, reject) => {
     var username = '', avatar = '', message = '';
     userschema.findOne({ 
@@ -9,9 +9,6 @@ export const findUserIdentificationInPosts = (_id) => {
       if (err) {
         const objErrMsg = JSON.stringify(err);
         message = objErrMsg.message || err.message || 'err'
-
-        console.log(message)
-        console.log(objErrMsg.message, err.message, 'err')
         
         reject({ username, avatar, message })
       } 
