@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userSchema from '../schema/user.js'
-import verifySignUp from '../middleware/verifySignUp.js'
+import verifySignUp from '../middleware/verifySignup.js'
 
 const router = express.Router();
 
